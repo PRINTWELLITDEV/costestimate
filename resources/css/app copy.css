@@ -1,0 +1,393 @@
+/* Import Bootstrap 5 */
+@import "bootstrap/dist/css/bootstrap.css";
+
+/* Import AdminLTE */
+@import "admin-lte/dist/css/adminlte.css";
+
+/* Footer */
+.app-footer {
+    background: #f8f9fa;
+    padding: 0 1rem;
+}
+.app-footer a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #0e2b96;
+}
+.app-footer .pi-link {
+    color: #0e2b96;
+    font-family: "Century Schoolbook", serif;
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: none;
+}
+.app-footer .pi-link:hover {
+    text-decoration: underline;
+}
+.app-main {
+    min-height: 100vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+/* Home Page */
+.home-body {
+    background: #000;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh !important;
+}
+.glass-bg-overlay {
+    position: fixed; /* or fixed, if you want it to scroll with the viewport */
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.596);
+    backdrop-filter: blur(0.2rem);
+}
+.glass-bg-overlay .lead i.bi-check-circle {
+    /* Set icons to white or a bright accent color */
+    color: #ffd700; /* Example: Gold */
+    margin-right: 5px;
+}
+/* Logo Responsiveness */
+.logo-img-small,
+.logo-img-large {
+    transition: transform 0.3s;
+}
+.logo-img-small:hover,
+.logo-img-large:hover {
+    transform: scale(1.1);
+}
+
+#irms-home-text {
+    color: #fff;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+.glass-button {
+    color: white;
+    border: 3px solid rgba(255, 255, 255, 0.719);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+    color: white;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.26);
+}
+.company-logos img {
+    width: 6rem !important;
+    height: 6rem !important;
+}
+
+@media (min-width: 992px) {
+    #irms-home-text {
+        font-size: 6rem;
+    }
+    .glass-button {
+        font-size: 1.25rem;
+        padding: 0.75rem 2.5rem;
+    }
+    .company-logos img {
+        width: 8rem !important;
+        height: 8rem !important;
+    }
+}
+@media (min-width: 768px) {
+    #irms-home-text {
+        font-size: 5rem;
+    }
+    .glass-button {
+        font-size: 1.1rem;
+        padding: 0.65rem 2rem;
+    }
+    .company-logos img {
+        width: 7rem !important;
+        height: 7rem !important;
+    }
+}
+@media (max-width: 576px) {
+    #irms-home-text {
+        font-size: 2rem;
+    }
+    .glass-button {
+        font-size: 1rem;
+        padding: 0.5rem 1.5rem;
+    }
+    .company-logos img {
+        width: 5rem !important;
+        height: 5rem !important;
+    }
+}
+@media (max-width: 400px) {
+    #irms-home-text {
+        font-size: 1.8rem;
+    }
+    .glass-button {
+        font-size: 0.9rem;
+        padding: 0.4rem 1.2rem;
+    }
+    .glass-panel p {
+        font-size: 0.8rem !important;
+    }
+    .company-logos img {
+        width: 4rem !important;
+        height: 4rem !important;
+    }
+}
+
+/* --- Login Page Split Layout --- */
+.login-body {
+    background: linear-gradient(120deg, #1e2a78 0%, #3a8dde 100%);
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh !important;
+}
+.login-bg-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.25;
+    pointer-events: none;
+    user-select: none;
+}
+.login-split-container,
+.login-card {
+    position: relative;
+    z-index: 1;
+}
+.login-split-container {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+.login-card {
+    display: flex;
+    min-height: 500px;
+    max-width: 900px;
+    width: 100%;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    border-radius: 18px;
+    overflow: hidden;
+    background: white;
+}
+.login-visual {
+    background: linear-gradient(120deg, #1e2a78 0%, #3a8dde 100%);
+    color: #fff;
+    flex: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-width: 320px;
+    padding: 0;
+}
+.login-visual-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+.login-app-logo {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.login-app-logo img {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    padding: 10px 26px;
+    height: 150px;
+    width: auto;
+    display: block;
+}
+.login-form-panel {
+    flex: 1;
+    background: #fff;
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.login-form-panel h2 {
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+}
+.login-form-panel .form-label {
+    color: #2563eb;
+    font-weight: 500;
+}
+.login-form-panel .form-control {
+    background: #f5f7fa;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+.login-form-panel .form-check-label {
+    color: #555;
+}
+.login-form-panel .btn-primary {
+    background: linear-gradient(90deg, #2563eb 0%, #3a8dde 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 0.75rem 2.5rem;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+    transition: background 0.2s;
+}
+.login-form-panel .btn-primary:hover {
+    background: linear-gradient(90deg, #1741a6 0%, #2563eb 100%);
+}
+.login-form-panel .form-text {
+    color: #888;
+    font-size: 0.95em;
+}
+.login-form-panel .forgot-link {
+    color: #2563eb;
+    font-size: 0.95em;
+    text-decoration: none;
+    margin-left: 1rem;
+}
+.login-form-panel .forgot-link:hover {
+    text-decoration: underline;
+}
+.login-form-panel .create-account {
+    color: #2563eb;
+    font-size: 0.97em;
+    text-decoration: none;
+    margin-top: 1.5rem;
+    display: inline-block;
+}
+.login-form-panel .create-account:hover {
+    text-decoration: underline;
+}
+@media (max-width: 900px) {
+    .login-card {
+        flex-direction: column;
+        min-height: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+    .login-visual {
+        min-height: 220px;
+    }
+    .login-app-logo img {
+        height: 250px;
+    }
+    .login-form-panel {
+        padding: 2rem 1.2rem;
+    }
+}
+@media (max-width: 600px) {
+    .login-visual {
+        min-height: 200px;
+    }
+    .login-app-logo {
+        top: 1.5rem;
+    }
+    .login-app-logo img {
+        height: 150px;
+    }
+    .login-form-panel {
+        padding: 1.2rem 0.5rem;
+    }
+    .login-visual {
+        min-width: 0;
+    }
+}
+@media (max-width: 400px) {
+    .login-visual {
+        min-height: 150px;
+    }
+    .login-app-logo img {
+        height: 100px;
+    }
+    .login-visual-img {
+        opacity: 0.6;
+    }
+}
+
+/* --- Register Page --- */
+.register-body {
+    background: #f0f2f5;
+    min-height: 100vh !important;
+}
+.register-body .slide { display: none; }
+.register-body .slide.active { display: block; }
+.register-body .site-radio {
+    display: none;
+}
+.register-body .site-label {
+    cursor: pointer;
+    transition: border-color 0.2s;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 4px;
+}
+.register-body .site-radio:checked + .site-label {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px #007bff33;
+}
+.register-body .site-label img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+}
+.register-body .employment-radio {
+    display: none;
+}
+.register-body .employment-label {
+    cursor: pointer;
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 4rem 5rem;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.register-body .employment-label:hover {
+    border-color: #007bff;
+    box-shadow: 0 0 10px #007bff33;
+}
+.register-body .employment-radio:checked + .employment-label {
+    border-color: #007bff;
+    background: #1169c7;
+    color: #ffffff;
+}
+
+@media (min-width: 768px) {
+    .register-body .row.justify-content-center {
+        margin: 0;
+    }
+    .register-body .row.justify-content-center .col-md-8 {
+        padding: 0;
+        min-width: 700px;
+    }
+    .register-body .site-label img {
+        width: 80px;
+        height: 80px;
+    }
+}

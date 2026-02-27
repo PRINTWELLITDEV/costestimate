@@ -1,0 +1,271 @@
+/* Import Bootstrap 5 */
+@import "bootstrap/dist/css/bootstrap.css";
+
+/* Import AdminLTE */
+@import "admin-lte/dist/css/adminlte.css";
+
+@import "./ce/tables.css";
+@import "./ce/users.css";
+@import "./ce/profile.css";
+/* @import "./ce/items.css"; */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+}
+
+:root {
+    --primary: #1f3a5f; /* Navbar, header */
+    --primary-hover: #1f3a5f8a; /* Navbar, header hover */
+    --secondary: #1f3a5f; /*buttons, links*/
+    --accent: #2fa4a9; /* totals, grand totals */
+    --background: #f4f6f8; /* background color tables and forms */
+    --text-color: #2e2e2e; /* text color */
+    --white: #ffffff; /* white */
+    --light-border: #ddd; /* light border color */
+    --placeholder-color: #999; /* placeholder text color */
+    --light-gray: #f8f9fa; /* light gray background */
+    --shadow-color: rgba(0, 0, 0, 0.12); /* shadow color */
+    --accent-shadow: rgba(47, 164, 169, 0.4); /* accent shadow */
+    --accent-focus: rgba(47, 164, 169, 0.1); /* accent focus */
+    --success-color: #16A34A; /* success color */
+    --danger-color: #DC2626; /* danger color */
+    --warning-color: #F59E0B; /* warning color */
+    --gray-color: #9CA3AF; /* gray color */
+}
+
+.app-main {
+    background: var(--background);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Footer */
+.app-footer {
+    background: var(--light-gray);
+    padding: 0 1rem;
+}
+.app-footer a {
+    text-decoration: none;
+    font-weight: bold;
+    color: var(--primary);
+}
+.app-footer .pi-link {
+    color: var(--primary);
+    font-family: "Century Schoolbook", serif;
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: none;
+}
+.app-footer .pi-link:hover {
+    text-decoration: underline;
+}
+
+/* Aside */
+.app-sidebar {
+    background: var(--light-gray);
+    border-right: 1px solid var(--light-border);
+    box-shadow: 2px 0 5px var(--shadow-color);
+}
+.app-sidebar .nav-link {
+    color: var(--text-color);
+}
+.app-sidebar .nav-link.active {
+    background-color: var(--accent) !important;
+    color: var(--white) !important;
+    box-shadow: 0 2px 2px var(--secondary);
+}
+.app-sidebar .nav-link.active:hover {
+    background-color: var(--accent) !important;
+    color: var(--white) !important;
+    box-shadow: 0 2px 5px var(--secondary);
+}
+.app-sidebar .nav-link:hover {
+    background-color: var(--accent-focus) !important;
+    color: var(--text-color) !important;
+}
+.app-sidebar .brand-image {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+    background-color: var(--white) !important;
+}
+
+/* Navbar */
+
+.app-header {
+    background-color: var(--primary);
+    box-shadow: 0 2px 5px var(--shadow-color);
+}
+.app-header .dropdown-toggle:hover {
+    border-radius: 5px;
+    background-color: var(--accent-focus);
+}
+/* User Dropdown Menu */
+.user-menu .dropdown-menu {
+    background-color: var(--background);
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 8px 16px var(--shadow-color);
+    padding: 0;
+    min-width: 260px;
+}
+
+.user-menu .header {
+    background-color: var(--light-border);
+    padding: 20px 15px;
+}
+
+.user-menu .user-name {
+    font-size: 15px;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.user-menu .user-subdescription {
+    font-size: 12px;
+    color: var(--secondary);
+}
+
+.user-menu .dropdown-item {
+    color: var(--text-color);
+    padding: 12px 15px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.user-menu .dropdown-item i {
+    width: 18px;
+    text-align: center;
+}
+
+.user-menu .dropdown-item:hover {
+    background-color: var(--accent);
+    color: var(--text-color);
+}
+
+.user-menu .dropdown-item.sign-out {
+    color: var(--danger-color);
+}
+
+.user-menu .dropdown-item.sign-out:hover {
+    background-color: var(--danger-color);
+    color: var(--white);
+}
+
+.user-menu .dropdown-divider {
+    border-color: var(--secondary);
+}
+
+.user-menu .dropdown-toggle::after {
+    display: none;
+}
+
+/* Breadcrumb Styling */
+.app-breadcrumb {
+    padding: 1rem 0;
+    background-color: transparent;
+    margin: 0;
+}
+
+.app-breadcrumb .breadcrumb {
+    padding: 0.75rem 1rem;
+    background-color: var(--background);
+    border-radius: 0.25rem;
+    margin-bottom: 1.5rem;
+}
+/* .breadcrumb-item, .breadcrumb-link, .breadcrumb-text, .breadcrumb-separator{
+    font-size: 16px !important;
+} */
+.breadcrumb-separator {
+    display: flex;
+    align-items: center;
+    color: var(--secondary);
+    padding: 0 0.5rem;
+}
+.breadcrumb-link {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.breadcrumb-link:hover {
+    color: var(--accent-hover) !important;
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: var(--secondary);
+}
+
+.breadcrumb-text {
+    color: var(--secondary);
+    cursor: default;
+}
+
+/* backgrounds bg  */ 
+.bg-primary {
+    background-color: var(--primary) !important;
+    color: var(--white) !important;
+}
+.bg-secondary {
+    background-color: var(--secondary) !important;
+    color: var(--white) !important;
+}
+.bg-success {
+    background-color: var(--success-color) !important;
+    color: var(--white) !important;
+}
+.bg-danger {
+    background-color: var(--danger-color) !important;
+    color: var(--white) !important;
+}
+.bg-warning {
+    background-color: var(--warning-color) !important;
+    color: var(--white) !important;
+}
+.bg-info {
+    background-color: var(--accent) !important;
+    color: var(--white) !important;
+}
+
+/* modal */
+.modal {
+    backdrop-filter: blur(8px) saturate(120%);
+}
+
+/* buttons */
+.btn-primary{
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+.btn-primary:hover {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+.btn-outline-primary {
+    border-color: var(--primary) !important;
+    color: var(--primary) !important;
+}
+.btn-outline-primary:hover {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+
+/* swal2 actions */
+.swal2-actions button{
+    flex: 1 1 0;
+    min-width: 150px;
+    max-width: 200px;
+    padding: .5rem 0;
+    font-size: medium;
+    border-radius: 5px;
+    text-align: center;
+}

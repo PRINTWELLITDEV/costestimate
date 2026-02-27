@@ -1,0 +1,112 @@
+/* Stats Cards */
+.stats-card {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    transition: all 0.3s ease;
+    border: none;
+    overflow: hidden;
+    position: relative;
+    height: 120px;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--card-color);
+}
+
+.stats-card.primary::before {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+}
+
+.stats-card.success::before {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+}
+
+.stats-card.warning::before {
+    background: linear-gradient(45deg, #ffc107, #d39e00);
+}
+
+.stats-card.danger::before {
+    background: linear-gradient(45deg, #dc3545, #b02a37);
+}
+
+.stats-card.info::before {
+    background: linear-gradient(45deg, #17a2b8, #117a8b);
+}
+
+.stats-card.secondary::before {
+    background: linear-gradient(45deg, #6c757d, #495057);
+}
+
+.stats-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.stats-label {
+    font-size: 0.9rem;
+    color: var(--secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.stats-icon {
+    font-size: 2.5rem;
+    opacity: 0.7;
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* User Table */
+.profile-img {
+    order: 1;
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: cover;
+}
+
+.profile-text {
+    order: 2;
+}
+.profile-text .small {
+    font-size: 0.875rem;
+    color: var(--secondary);
+}
+/* badge */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 1rem;
+}
+.badge.bg-danger {
+    background-color: var(--danger-color) !important;
+    color: var(--white);
+}
+.badge.bg-primary {
+    background-color: var(--primary) !important;
+    color: var(--white);
+}
+.badge.bg-secondary {
+    background-color: var(--gray-color) !important;
+    color: var(--white);
+}
+.badge.bg-success {
+    background-color: var(--success-color) !important;
+    color: var(--white);
+}
