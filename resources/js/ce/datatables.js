@@ -25,26 +25,3 @@ $.extend($.fn.dataTable.defaults, {
         }
     ],
 });
-
-$(document).ready(function () {
-
-    // Item Locations job-rack-list table
-    const jobRackListTable = $("#job-details-table").DataTable({
-        fixedHeader: true,
-        columnControl: ["order", ['searchList']],
-        ordering: {
-            indicators: false,
-            handler: true,
-        },
-        responsive: true,
-        language: {
-            emptyTable: "No Item Locations found",
-        },
-    });
-
-    // Search function for job rack list
-    $("#jobRackSearch").on("keyup", function () {
-        jobRackListTable.search(this.value).draw();
-    });
-
-});

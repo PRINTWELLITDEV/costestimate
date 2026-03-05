@@ -6,7 +6,7 @@ import "./sites.js";
 import "./users.js";
 import "./ptypes.js";
 import "./vendors.js";
-import "./items.js";
+import "./stocks.js";
 import "./pbp.js";
 
 

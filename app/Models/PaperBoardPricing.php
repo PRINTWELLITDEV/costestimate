@@ -7,8 +7,9 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Site;
 use App\Models\PType;
-use App\Models\Items;
+use App\Models\Stocks;
 use App\Models\Vendors;
+use App\Models\U_M;
 
 class PaperBoardPricing extends Model
 {
@@ -23,7 +24,8 @@ class PaperBoardPricing extends Model
         'Group',
         'PType',
         'Vendor',
-        'ItemCode',
+        'StockCode',
+        'UM',
         'EffectiveDate',
         'Currcode',
         'Price_MT',
@@ -45,7 +47,9 @@ class PaperBoardPricing extends Model
                     pbp.Site, pbp.id, pbp.[Group] AS [VendorGroup],
                     pbp.PType, p.PTypeDesc,
                     pbp.Vendor, v.[Name] AS [VendName], 
-                    pbp.ItemCode, i.ItemDesc,
+                    pbp.StockCode, s.StockDesc,
+                    pbp.UM,
+                    u.UMDesc,
                     pbp.Currcode,
                     pbp.Price_MT,
                     pbp.Price_Sheet,
@@ -56,7 +60,8 @@ class PaperBoardPricing extends Model
                     PaperBoardPricing pbp
                     INNER JOIN vendors v ON v.Vendnum = pbp.Vendor AND v.Site = pbp.Site
                     INNER JOIN ptype p ON p.PType = pbp.PType AND p.Site = pbp.Site
-                    INNER JOIN items i ON i.ItemCode = pbp.ItemCode AND i.Site = pbp.Site";
+                    INNER JOIN stocks s ON s.StockCode = pbp.StockCode AND s.Site = pbp.Site
+                    LEFT JOIN u_m u ON u.UM = pbp.UM";
         if ($user->level != 1) {
             $query .= " WHERE pbp.Site = '" . $user->site . "'";
         }
@@ -78,19 +83,27 @@ class PaperBoardPricing extends Model
             ->get(['Site', 'Group', 'Vendnum', 'Name', 'Currcode']);
     }
 
-    public static function getItems()
+    public static function getStocks()
     {
-        return Items::orderBy('Site', 'asc')
-            ->orderBy('ItemCode', 'asc')
-            ->get(['Site', 'PType', 'ItemCode', 'ItemDesc']);
+        return Stocks::orderBy('Site', 'asc')
+            ->orderBy('StockCode', 'asc')
+            ->get(['Site', 'PType', 'StockCode', 'StockDesc']);
     }
 
-    public static function getItemCode($site, $ptype)
+    public static function getStockCode($site, $ptype)
     {
-        return Items::where('Site', $site)
+        return Stocks::where('Site', $site)
             ->where('PType', $ptype)
-            ->orderBy('ItemCode', 'asc')
-            ->get(['ItemCode', 'ItemDesc']);
+            ->orderBy('StockCode', 'asc')
+            ->get(['StockCode', 'StockDesc']);
+    }
+
+    public static function getUM()
+    {
+        $UM = U_M::select('UM', 'UMDesc')
+            ->orderBy('UM', 'asc')
+            ->get();
+        return $UM;
     }
 
     public static function getVendorCurrency($site, $vendnum)
@@ -113,7 +126,8 @@ class PaperBoardPricing extends Model
             'Group' => $data['Group'],
             'PType' => $data['PType'],
             'Vendor' => $data['Vendor'],
-            'ItemCode' => $data['ItemCode'],
+            'StockCode' => $data['StockCode'],
+            'UM' => $data['UM'],
             'Currcode' => $data['Currcode'],
             'Price_MT' => $data['Price_MT'],
             'Price_Sheet' => $data['Price_Sheet'],
@@ -140,7 +154,8 @@ class PaperBoardPricing extends Model
             'Group' => $data['Group'],
             'PType' => $data['PType'],
             'Vendor' => $data['Vendor'],
-            'ItemCode' => $data['ItemCode'],
+            'StockCode' => $data['StockCode'],
+            'UM' => $data['UM'],
             'Currcode' => $data['Currcode'],
             'Price_MT' => $data['Price_MT'],
             'Price_Sheet' => $data['Price_Sheet'],
@@ -148,7 +163,7 @@ class PaperBoardPricing extends Model
             'Price_Bale' => $data['Price_Bale'],
             'EffectiveDate' => $data['EffectiveDate'],
         ]);
-        return ['error' => false, 'message' => $data['Vendor'].' '. $data['PType'].' '. $data['ItemCode'] .' updated successfully!'];
+        return ['error' => false, 'message' => $data['Vendor'].' '. $data['PType'].' '. $data['StockCode'] .' updated successfully!'];
     }
 
     public static function deletePricing($site, $id)

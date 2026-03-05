@@ -12,7 +12,7 @@ use App\Http\Controllers\CostEstimate\UserProfileController;
 use App\Http\Controllers\CostEstimate\SiteController;
 use App\Http\Controllers\CostEstimate\PTypesController;
 use App\Http\Controllers\CostEstimate\VendorsController;
-use App\Http\Controllers\CostEstimate\ItemsController;
+use App\Http\Controllers\CostEstimate\StockController;
 use App\Http\Controllers\CostEstimate\PaperBoardPriceController;
 
 use App\Http\Controllers\HomeController;
@@ -93,27 +93,26 @@ Route::prefix('ce')->middleware('auth')->group(function () {
     Route::put('/vendors/update', [VendorsController::class, 'update'])->name('vendors.update');
     Route::delete('/vendors/delete', [VendorsController::class, 'delete'])->name('vendors.delete');
 
-    Route::get('/items', [ItemsController::class, 'index'])->name('items.index');
-    Route::get('/items/list', [ItemsController::class, 'itemList'])->name('items.itemlist');
-    Route::get('/items/api/ptypes', [ItemsController::class, 'getPtypes'])->name('items.getptypes');
-    Route::get('/items/add-item', [ItemsController::class, 'addItemForm'])->name('items.add');
-    Route::post('/items/store', [ItemsController::class, 'store'])->name('items.store');
-    Route::get('/items/edit-item', [ItemsController::class, 'editItemForm'])->name('items.edit');
-    Route::put('/items/update', [ItemsController::class, 'update'])->name('items.update');
-    Route::delete('/items/delete', [ItemsController::class, 'delete'])->name('items.delete');
+    Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
+    Route::get('/stocks/list', [StockController::class, 'stockList'])->name('stocks.stocklist');
+    Route::get('/stocks/api/ptypes', [StockController::class, 'getPtypes'])->name('stocks.getptypes');
+    Route::get('/stocks/add-stock', [StockController::class, 'addStockForm'])->name('stocks.add');
+    Route::post('/stocks/store', [StockController::class, 'store'])->name('stocks.store');
+    Route::get('/stocks/edit-stock', [StockController::class, 'editStockForm'])->name('stocks.edit');
+    Route::put('/stocks/update', [StockController::class, 'update'])->name('stocks.update');
+    Route::delete('/stocks/delete', [StockController::class, 'delete'])->name('stocks.delete');
 
     Route::get('/paper-board-price', [PaperBoardPriceController::class, 'index'])->name('paperboardprice.index');
     Route::get('/paper-board-price/list', [PaperBoardPriceController::class, 'pricingList'])->name('paperboardprice.pricinglist');
     Route::get('/paper-board-price/api/ptypes', [PaperBoardPriceController::class, 'getPTypes'])->name('paperboardprice.api.ptypes');
     Route::get('/paper-board-price/api/vendors', [PaperBoardPriceController::class, 'getVendors'])->name('paperboardprice.api.vendors');
-    Route::get('/paper-board-price/api/items', [PaperBoardPriceController::class, 'getItems'])->name('paperboardprice.api.items');
+    Route::get('/paper-board-price/api/stocks', [PaperBoardPriceController::class, 'getStocks'])->name('paperboardprice.api.stocks');
+    Route::get('/paper-board-price/api/um', [PaperBoardPriceController::class, 'getUM'])->name('paperboardprice.api.um');
     Route::post('/paper-board-price/store', [PaperBoardPriceController::class, 'store'])->name('paperboardprice.store');
     Route::put('/paper-board-price/update', [PaperBoardPriceController::class, 'update'])->name('paperboardprice.update');
     Route::delete('/paper-board-price/delete', [PaperBoardPriceController::class, 'delete'])->name('paperboardprice.delete');
 
-    Route::get('/test' , function () {
-        return view('ce.ce-layouts.test');
-    })->name('test');
+    Route::get('/paper-board-price/calculator', [PaperBoardPriceController::class, 'pbpcalculatorForm'])->name('paperboardprice.calculator');
 });
 
 

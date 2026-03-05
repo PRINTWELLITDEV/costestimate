@@ -1,5 +1,5 @@
 @extends('ce/ce-layouts.app')
-@section('title', 'Paper Board Price | ' . config('app.name'))
+@section('title', 'Paper / Board Pricing | ' . config('app.name'))
 @section('content')
 
     <div class="app-content-wrapper">
@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col mb-3 d-flex align-items-center">
-                        <h1 class="d-inline-block mb-0 me-3">Paper Board Price</h1>
+                        <h1 class="d-inline-block mb-0 me-3">Paper / Board Pricing</h1>
                     </div>
                 </div>
             </div>
@@ -19,18 +19,32 @@
                     <div class="col">
                         <div class="card p-3">
                             <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <button type="button" id="btnAddPricing"
-                                        class="btn btn-primary d-flex align-items-center me-2" data-bs-toggle="modal"
-                                        data-bs-target="#addPricingModal">
-                                        <i class="bi bi-plus-circle d-none d-sm-inline me-2"></i>
-                                        <span class="d-none d-sm-inline">Add Pricing</span>
-                                        <i class="bi bi-plus-circle d-inline d-sm-none"></i>
-                                    </button>
+                                <div class="row align-items-center g-2 mb-3">
+                                    <div class="col-auto">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <button type="button" id="btnAddPricing"
+                                                class="btn btn-primary d-flex align-items-center" data-bs-toggle="modal"
+                                                data-bs-target="#addPricingModal">
+                                                <i class="bi bi-plus-circle d-none d-sm-inline me-2"></i>
+                                                <span class="d-none d-sm-inline">Add Pricing</span>
+                                                <i class="bi bi-plus-circle d-inline d-sm-none"></i>
+                                            </button>
 
-                                    <div class="input-group" style="max-width: 300px;">
-                                        <input type="text" id="pricingSearch" class="form-control" placeholder="Search...">
-                                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                            <button type="button" class="btn btn-primary d-flex align-items-center"
+                                                onclick="window.location='{{ route('paperboardprice.calculator') }}'">
+                                                <i class="bi bi-calculator me-2"></i>
+                                                <span class="d-none d-sm-inline">Price Calculator</span>
+                                                <i class="bi bi-calculator d-inline d-sm-none"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col ms-auto">
+                                        <div class="input-group ms-auto" style="max-width: 300px;">
+                                            <input type="text" id="pricingSearch" class="form-control"
+                                                placeholder="Search...">
+                                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -44,7 +58,8 @@
                                                 <th>Group</th>
                                                 <th>Paper Type</th>
                                                 <th>Vendor</th>
-                                                <th>Item Code</th>
+                                                <th>Stock Code</th>
+                                                <th>Unit</th>
                                                 <th>Effective Date</th>
                                                 <th>Currency</th>
                                                 <th>Price/MT</th>
@@ -77,10 +92,10 @@
                 <div class="modal-body">
                     <form id="addPricingForm" action="{{ route('paperboardprice.store') }}" method="POST">
                         @csrf
-                        <div class="row mb-3">
+                        <div class="row">
                             @if(auth()->user()->level == 1)
                                 <label for="site" class="form-label">Site</label>
-                                <div class="input-group">
+                                <div class="input-group mb-3">
                                     <select name="Site" id="site" class="form-select" required>
                                         <option disabled selected>Select Site</option>
                                         @foreach($sites as $site)
@@ -93,7 +108,12 @@
                             @else
                                 <input type="hidden" id="site" name="Site" value="{{ auth()->user()->site }}">
                             @endif
+                            <div class="mb-3">
+                                <label for="effectivedate" class="form-label">Effective Date</label>
+                                <input type="date" class="form-control" id="effectivedate" name="EffectiveDate" required>
+                            </div>
                         </div>
+
 
                         <div class="row">
                             <div class="col-md-6">
@@ -127,16 +147,16 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="itemcode" class="form-label">Item Code</label>
-                                    <select name="ItemCode" id="itemcode" class="form-select" required>
-                                        <option disabled selected>Select Item</option>
-
+                                    <label for="stockcode" class="form-label">Stock Code</label>
+                                    <select name="StockCode" id="stockcode" class="form-select" required>
+                                        <option disabled selected>Select Stock Code</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="effectivedate" class="form-label">Effective Date</label>
-                                    <input type="date" class="form-control" id="effectivedate" name="EffectiveDate"
-                                        required>
+                                    <label for="unit" class="form-label">Unit of Measure</label>
+                                    <select name="UM" id="unit" class="form-select" required>
+                                        <option disabled selected>Select Unit</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -186,6 +206,11 @@
                         <input type="hidden" name="Site" id="edit_site">
 
                         <div class="row">
+                            <div class="mb-3">
+                                <label for="edit_effectivedate" class="form-label">Effective Date</label>
+                                <input type="date" class="form-control" id="edit_effectivedate" name="EffectiveDate"
+                                    required>
+                            </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="edit_group" class="form-label">Group</label>
@@ -221,16 +246,18 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="edit_itemcode" class="form-label">Item Code</label>
-                                    <select name="ItemCode" id="edit_itemcode" class="form-select" required>
-                                        <option disabled selected>Select Item</option>
+                                    <label for="edit_stockcode" class="form-label">Stock Code</label>
+                                    <select name="StockCode" id="edit_stockcode" class="form-select" required>
+                                        <option disabled selected>Select Stock Code</option>
 
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="edit_effectivedate" class="form-label">Effective Date</label>
-                                    <input type="date" class="form-control" id="edit_effectivedate" name="EffectiveDate"
-                                        required>
+                                    <label for="edit_unit" class="form-label">Unit of Measure</label>
+                                    <select name="UM" id="edit_unit" class="form-select" required>
+                                        <option disabled selected>Select Unit</option>
+
+                                    </select>
                                 </div>
                             </div>
 

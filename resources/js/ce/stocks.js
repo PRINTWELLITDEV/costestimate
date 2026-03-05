@@ -10,7 +10,7 @@ let allPtypes = [];
 
 // Load ptypes data via AJAX
 function loadPtypesData() {
-    return $.get(window.appUrl + '/ce/items/api/ptypes', function(data) {
+    return $.get(window.appUrl + '/ce/stocks/api/ptypes', function(data) {
         allPtypes = data;
     });
 }
@@ -28,12 +28,12 @@ function populatePtypeSelect(data) {
     
     $select.html('<option disabled selected>Select Type</option>');
     
-    data.forEach(item => {
+    data.forEach(stock => {
         $select.append(
             $('<option></option>')
-                .attr('value', item.PType)
-                .attr('data-desclabel', item.DescLabel)
-                .text(item.PType + ' - ' + item.PTypeDesc)
+                .attr('value', stock.PType)
+                .attr('data-desclabel', stock.DescLabel)
+                .text(stock.PType + ' - ' + stock.PTypeDesc)
         );
     });
     
@@ -44,13 +44,13 @@ function populatePtypeSelect(data) {
     });
 }
 
-function loadItemsTable() {
-    $.get(window.appUrl + "/ce/items/list", function (html) {
-        if ($.fn.DataTable.isDataTable("#item-table")) {
-            $("#item-table").DataTable().clear().destroy();
+function loadStocksTable() {
+    $.get(window.appUrl + "/ce/stocks/list", function (html) {
+        if ($.fn.DataTable.isDataTable("#stock-table")) {
+            $("#stock-table").DataTable().clear().destroy();
         }
-        $("#itemTableBody").html(html);
-        const itemTable = $("#item-table").DataTable({
+        $("#stockTableBody").html(html);
+        const stockTable = $("#stock-table").DataTable({
             pageLength: 10,
             fixedHeader: true,
             // columnControl: [["searchList"]],
@@ -60,19 +60,19 @@ function loadItemsTable() {
             },
             responsive: true,
             language: {
-                emptyTable: "No items found",
+                emptyTable: "No stocks found",
             },
         });
-        $("#itemSearch").on("keyup", function () {
-            itemTable.search(this.value).draw();
+        $("#stockSearch").on("keyup", function () {
+            stockTable.search(this.value).draw();
         });
     });
 }
 
 
 // Call on page load
-if (window.location.pathname.includes("/items")) {
-    loadItemsTable();
+if (window.location.pathname.includes("/stocks")) {
+    loadStocksTable();
 }
 
 // Set CSRF token for all AJAX requests
@@ -94,7 +94,7 @@ function disableFormFields(fields, disable) {
 }
 
 // Initialize form functionality
-function initializeItemForm() {
+function initializeStockForm() {
     // Load ptypes data first
     loadPtypesData().then(() => {
         // Initialize Select2 for ptype
@@ -106,10 +106,10 @@ function initializeItemForm() {
         
         // Add Select2 specific event listener for ptype
         $('#ptype').on('select2:select', function (e) {
-            generateItemCode();
+            generateStockCode();
         });
 
-        const form = document.getElementById("addItemForm");
+        const form = document.getElementById("addStockForm");
         if (!form) return;
 
         const siteSelect = document.getElementById("site");
@@ -155,7 +155,7 @@ function initializeItemForm() {
     });
 }
 
-function initializeEditItemForm() {
+function initializeEditStockForm() {
     // Product Group select2 and set value
     $('#product_group').select2({
         placeholder: 'Select Product Group',
@@ -174,16 +174,16 @@ function initializeEditItemForm() {
         });
 
         $('#ptype').on('select2:select', function (e) {
-            generateItemCode();
+            generateStockCode();
         });
 
-        const form = document.getElementById("editItemForm");
+        const form = document.getElementById("editStockForm");
         if (!form) return;
 
         // Get site from hidden input
         const siteInput = document.getElementById("site");
-        const itemSite = siteInput ? siteInput.value : null;
-        const filteredPtypes = filterPTypesBySite(itemSite);
+        const stockSite = siteInput ? siteInput.value : null;
+        const filteredPtypes = filterPTypesBySite(stockSite);
         populatePtypeSelect(filteredPtypes);
 
         // Set the current ptype value after populating
@@ -197,18 +197,18 @@ function initializeEditItemForm() {
     });
 }
 
-if (window.location.pathname.includes("/items/add-item")) {
-    initializeItemForm();
+if (window.location.pathname.includes("/stocks/add-stock")) {
+    initializeStockForm();
 } 
-if (window.location.pathname.includes("/items/edit-item")) {
-    initializeEditItemForm();
+if (window.location.pathname.includes("/stocks/edit-stock")) {
+    initializeEditStockForm();
 }
 
 
-// Add item form
-// item code and description generation
+// Add stock form
+// stock code and description generation
 
-// Item Code Formula
+// Stock Code Formula
 // PType = value
 // Caliper = if exist then value up to 4 int digits else none or skipped
 // Chipboard No. = if exist then value "#" + up to 4 int digits else none or skipped
@@ -218,7 +218,7 @@ if (window.location.pathname.includes("/items/edit-item")) {
 // Length = if exist then value up to 4 int digits else none or skipped
 // UM = if exist then get the first letter of the value
 
-// Item Code = PType + Caliper + Chipboard No. + Pounds/Ream + GSM +Width + Length + UM
+// Stock Code = PType + Caliper + Chipboard No. + Pounds/Ream + GSM +Width + Length + UM
 // Example
 // PType = BP
 // Caliper = 12
@@ -229,7 +229,7 @@ if (window.location.pathname.includes("/items/edit-item")) {
 // Length = 96
 // UM = Ream
 
-// Item Code = BP0012#0003500#015000480096R
+// Stock Code = BP0012#0003500#015000480096R
 
 // Remove leading zeros from number inputs
 function removeLeadingZeros(input) {
@@ -265,7 +265,7 @@ function initializeLeadingZeroRemoval() {
 
 
 function clearForm() {
-    const form = document.getElementById("addItemForm");
+    const form = document.getElementById("addStockForm");
     const inputs = form.querySelectorAll(
         'input:not([type="hidden"]):not(#site), select:not(#site)',
     );
@@ -279,7 +279,7 @@ function clearForm() {
 }
 
 function AutoGenerationListeners() {
-    // Fields that affect item code generation
+    // Fields that affect stock code generation
     const generationFields = [
         "ptype",
         "caliper",
@@ -294,13 +294,13 @@ function AutoGenerationListeners() {
     generationFields.forEach((fieldId) => {
         const field = document.getElementById(fieldId);
         if (field) {
-            field.addEventListener("input", generateItemCode);
-            field.addEventListener("change", generateItemCode);
+            field.addEventListener("input", generateStockCode);
+            field.addEventListener("change", generateStockCode);
         }
     });
 }
 
-function generateItemCode() {
+function generateStockCode() {
     // Get form values
     const ptype = document.getElementById("ptype")?.value || "";
     const caliper = document.getElementById("caliper")?.value || "";
@@ -313,18 +313,18 @@ function generateItemCode() {
 
     // Only generate if we have at least PType
     if (!ptype || ptype === "Select Type") {
-        document.getElementById("item_code").value = "";
-        generateItemDescription();
+        document.getElementById("stock_code").value = "";
+        generateStockDescription();
         return;
     }
 
-    let itemCode = ptype;
+    let stockCode = ptype;
 
     // Caliper - up to 4 int digits, zero-padded
     if (caliper) {
         const caliperNum = parseInt(caliper);
         if (!isNaN(caliperNum) && caliperNum > 0) {
-            itemCode += caliperNum.toString().padStart(4, "0");
+            stockCode += caliperNum.toString().padStart(4, "0");
         }
     }
 
@@ -332,7 +332,7 @@ function generateItemCode() {
     if (chipboardNo) {
         const chipboardNum = parseInt(chipboardNo);
         if (!isNaN(chipboardNum) && chipboardNum > 0) {
-            itemCode += "#" + chipboardNum.toString().padStart(4, "0");
+            stockCode += "#" + chipboardNum.toString().padStart(4, "0");
         }
     }
 
@@ -340,7 +340,7 @@ function generateItemCode() {
     if (poundsReam) {
         const poundsReamNum = parseInt(poundsReam);
         if (!isNaN(poundsReamNum) && poundsReamNum > 0) {
-            itemCode += poundsReamNum.toString().padStart(4, "0") + "#";
+            stockCode += poundsReamNum.toString().padStart(4, "0") + "#";
         }
     }
 
@@ -348,7 +348,7 @@ function generateItemCode() {
     if (gsm) {
         const gsmNum = parseInt(gsm);
         if (!isNaN(gsmNum) && gsmNum > 0) {
-            itemCode += gsmNum.toString().padStart(4, "0");
+            stockCode += gsmNum.toString().padStart(4, "0");
         }
     }
 
@@ -356,7 +356,7 @@ function generateItemCode() {
     if (width) {
         const widthNum = parseInt(parseFloat(width));
         if (!isNaN(widthNum) && widthNum > 0) {
-            itemCode += widthNum.toString().padStart(4, "0");
+            stockCode += widthNum.toString().padStart(4, "0");
         }
     }
 
@@ -364,23 +364,23 @@ function generateItemCode() {
     if (length) {
         const lengthNum = parseInt(parseFloat(length));
         if (!isNaN(lengthNum) && lengthNum > 0) {
-            itemCode += lengthNum.toString().padStart(4, "0");
+            stockCode += lengthNum.toString().padStart(4, "0");
         }
     }
 
     // Unit - first letter
-    if (unit) {
-        itemCode += unit.charAt(0).toUpperCase();
-    }
+    // if (unit) {
+    //     stockCode += unit.charAt(0).toUpperCase();
+    // }
 
-    // Set the generated item code
-    document.getElementById("item_code").value = itemCode;
+    // Set the generated stock code
+    document.getElementById("stock_code").value = stockCode;
 
-    // Generate item description
-    generateItemDescription();
+    // Generate stock description
+    generateStockDescription();
 }
 
-// Item Description Formula
+// Stock Description Formula
 // PType data-DescLabel = value
 // If Caliper exist then add value + " Cal"
 // If chipboardNo exist then add " #" + value
@@ -388,7 +388,7 @@ function generateItemCode() {
 // If Width and Length exist then add value of width + "x" + length + " "
 // If UM exist then add the first letter of UM
 
-function generateItemDescription() {
+function generateStockDescription() {
     const ptype = document.getElementById("ptype")?.value || "";
     const caliper = document.getElementById("caliper")?.value || "";
     const chipboardNo = document.getElementById("chipboard_no")?.value || "";
@@ -463,13 +463,13 @@ function generateItemDescription() {
         description += " " + specs.join(" ");
     }
 
-    document.getElementById("item_description").value = description;
+    document.getElementById("stock_description").value = description;
 }
 
-// Handle add item button click
-$("#saveItembtn").on("click", function (e) {
+// Handle add stock button click
+$("#saveStockbtn").on("click", function (e) {
     e.preventDefault();
-    const form = $("#addItemForm")[0];
+    const form = $("#addStockForm")[0];
     const formData = new FormData(form);
 
     $.ajax({
@@ -479,19 +479,19 @@ $("#saveItembtn").on("click", function (e) {
         processData: false,
         contentType: false,
         success: function (data) {
-            window.location.href = window.appUrl + "/ce/items";
+            window.location.href = window.appUrl + "/ce/stocks";
             Swal.fire({
                 // toast: true,
                 // position: "top-end",
                 icon: "success",
-                title: data.message || "Item added successfully!",
+                title: data.message || "Stock added successfully!",
                 showConfirmButton: true,
                 // timer: 3000,
                 // timerProgressBar: true,
             });
-            // $("#addItemModal").modal("hide");
+            // $("#addStockModal").modal("hide");
             // form.reset();
-            setTimeout(loadItemsTable, 500);
+            setTimeout(loadStocksTable, 500);
         },
         error: function (xhr) {
             let msg = "An error occurred";
@@ -510,10 +510,10 @@ $("#saveItembtn").on("click", function (e) {
     });
 });
 
-// Handle edit item form initialization
-$("#updateItembtn").on("click", function (e) {
+// Handle edit stock form initialization
+$("#updateStockbtn").on("click", function (e) {
     e.preventDefault();
-    const form = $("#editItemForm")[0];
+    const form = $("#editStockForm")[0];
     const formData = new FormData(form);
 
     $.ajax({
@@ -527,18 +527,18 @@ $("#updateItembtn").on("click", function (e) {
                 // toast: true,
                 // position: "top-end",
                 icon: "success",
-                title: data.message || "Item updated successfully!",
+                title: data.message || "Stock updated successfully!",
                 showConfirmButton: true,
                 // timer: 3000,
                 // timerProgressBar: true,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = window.appUrl + "/ce/items";
+                    window.location.href = window.appUrl + "/ce/stocks";
                 };
             });
-            // $("#addItemModal").modal("hide");
+            // $("#addStockModal").modal("hide");
             // form.reset();
-            // setTimeout(loadItemsTable, 500);
+            // setTimeout(loadStocksTable, 500);
         },
         error: function (xhr) {
             let msg = "An error occurred";
@@ -558,18 +558,18 @@ $("#updateItembtn").on("click", function (e) {
 });
 
 // Handle delete button
-$(document).on("click", ".delete-item-btn", function (e) {
+$(document).on("click", ".delete-stock-btn", function (e) {
     e.preventDefault();
 
     const site = $(this).data("site");
-    const itemcode = $(this).data("itemcode");
-    const itemdesc = $(this).data("itemdesc");
+    const stockcode = $(this).data("stockcode");
+    const stockdesc = $(this).data("stockdesc");
 
     Swal.fire({
-        title: "Delete Item?",
+        title: "Delete Stock?",
         html: `
-            You are about to delete this item:<br><br>
-            <strong>${itemcode} - ${itemdesc}</strong><br><br>
+            You are about to delete this stock:<br><br>
+            <strong>${stockcode} - ${stockdesc}</strong><br><br>
             This action cannot be undone.
         `,
         icon: "warning",
@@ -585,11 +585,11 @@ $(document).on("click", ".delete-item-btn", function (e) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: window.appUrl + "/ce/items/delete",
+                url: window.appUrl + "/ce/stocks/delete",
                 method: "DELETE",
                 data: {
                     Site: site,
-                    ItemCode: itemcode,
+                    StockCode: stockcode,
                     _token: $('meta[name="csrf-token"]').attr("content"),
                 },
                 success: function (data) {
@@ -598,13 +598,13 @@ $(document).on("click", ".delete-item-btn", function (e) {
                         position: "top-end",
                         icon: "success",
                         title:
-                            data.message || "Item deleted successfully!",
+                            data.message || "Stock deleted successfully!",
                         showConfirmButton: false,
                         timer: 3000,
                         timerProgressBar: true,
                     });
 
-                    setTimeout(loadItemsTable, 500);
+                    setTimeout(loadStocksTable, 500);
                 },
                 error: function (xhr) {
                     let msg = "An error occurred";

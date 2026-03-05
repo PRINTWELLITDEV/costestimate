@@ -5,7 +5,8 @@ import * as bootstrap from "bootstrap";
 let allData = {
     vendors: [],
     ptypes: [],
-    items: [],
+    stocks: [],
+    u_m: [],
 };
 
 // Load all data via AJAX when page loads
@@ -17,8 +18,11 @@ function loadAllData() {
         $.get(window.appUrl + "/ce/paper-board-price/api/ptypes", (data) => {
             allData.ptypes = data;
         }),
-        $.get(window.appUrl + "/ce/paper-board-price/api/items", (data) => {
-            allData.items = data;
+        $.get(window.appUrl + "/ce/paper-board-price/api/stocks", (data) => {
+            allData.stocks = data;
+        }),
+        $.get(window.appUrl + "/ce/paper-board-price/api/um", (data) => {
+            allData.u_m = data;
         }),
     ]);
 }
@@ -34,10 +38,10 @@ function filterVendorsBySiteAndGroup(siteCode, groupCode) {
     if (groupCode) filtered = filtered.filter((v) => v.Group === groupCode);
     return filtered;
 }
-function filterItemsBySiteAndPType(siteCode, ptypeCode) {
-    let filtered = allData.items;
-    if (siteCode) filtered = filtered.filter((i) => i.Site === siteCode);
-    if (ptypeCode) filtered = filtered.filter((i) => i.PType === ptypeCode);
+function filterStocksBySiteAndPType(siteCode, ptypeCode) {
+    let filtered = allData.stocks;
+    if (siteCode) filtered = filtered.filter((s) => s.Site === siteCode);
+    if (ptypeCode) filtered = filtered.filter((s) => s.PType === ptypeCode);
     return filtered;
 }
 
@@ -56,12 +60,12 @@ function populateSelect2(
         ? $("#editPricingModal")
         : $("#addPricingModal");
     $select.html(`<option disabled selected>${placeholderText}</option>`);
-    data.forEach((item) => {
-        let displayText = item[displayKey];
-        if (secondaryKey) displayText += " - " + item[secondaryKey];
+    data.forEach((stock) => {
+        let displayText = stock[displayKey];
+        if (secondaryKey) displayText += " - " + stock[secondaryKey];
         $select.append(
             $("<option></option>")
-                .attr("value", item[valueKey])
+                .attr("value", stock[valueKey])
                 .text(displayText),
         );
     });
@@ -73,12 +77,43 @@ function populateSelect2(
     });
 }
 
+function resetUMSelect(isEditModal = false, placeholder = "Select PType and Stock Code First") {
+    const unitId = isEditModal ? "edit_unit" : "unit";
+    const dropdownParent = isEditModal ? $("#editPricingModal") : $("#addPricingModal");
+    const $unit = $(`#${unitId}`);
+
+    if ($unit.hasClass("select2-hidden-accessible")) {
+        $unit.select2("destroy");
+    }
+
+    $unit.html(`<option disabled selected>${placeholder}</option>`)
+        .prop("disabled", true)
+        .select2({
+            placeholder,
+            width: "100%",
+            dropdownParent,
+        });
+}
+
+function populateUMWhenReady(isEditModal = false) {
+    const ptype = isEditModal ? $("#edit_ptype").val() : $("#ptype").val();
+    const stock = isEditModal ? $("#edit_stockcode").val() : $("#stockcode").val();
+
+    if (!ptype || !stock) {
+        resetUMSelect(isEditModal);
+        return;
+    }
+
+    const unitId = isEditModal ? "edit_unit" : "unit";
+    populateSelect2(unitId, allData.u_m, "UM", "UM", "UMDesc", "Select Unit");
+}
+
 // Initialize all select2 dropdowns in the form
 function initializeFormSelects(isEditModal = false) {
     const groupId = isEditModal ? "#edit_group" : "#group";
     const vendorId = isEditModal ? "#edit_vendor" : "#vendor";
     const ptypeId = isEditModal ? "#edit_ptype" : "#ptype";
-    const itemcodeId = isEditModal ? "#edit_itemcode" : "#itemcode";
+    const stockcodeId = isEditModal ? "#edit_stockcode" : "#stockcode";
     const dropdownParent = isEditModal
         ? $("#editPricingModal")
         : $("#addPricingModal");
@@ -106,13 +141,15 @@ function initializeFormSelects(isEditModal = false) {
             width: "100%",
             dropdownParent: dropdownParent,
         });
-    $(itemcodeId)
-        .html("<option disabled selected>Select Item Code</option>")
+    $(stockcodeId)
+        .html("<option disabled selected>Select Stock Code</option>")
         .select2({
-            placeholder: "Select Item Code",
+            placeholder: "Select Stock Code",
             width: "100%",
             dropdownParent: dropdownParent,
         });
+
+    resetUMSelect(isEditModal);
 }
 
 // Load pricing table
@@ -194,7 +231,7 @@ function initializePricingForm() {
                         width: "100%",
                         dropdownParent: $("#addPricingModal"),
                     });
-                $("#itemcode")
+                $("#stockcode")
                     .html(
                         "<option disabled selected>Select Paper Type First</option>",
                     )
@@ -204,7 +241,9 @@ function initializePricingForm() {
                         width: "100%",
                         dropdownParent: $("#addPricingModal"),
                     });
+                resetUMSelect(false);
                 $("#currcode").val("");
+
             } else {
                 $("#group").html(
                     "<option disabled selected>Select Site First</option>",
@@ -229,7 +268,7 @@ function initializePricingForm() {
                         width: "100%",
                         dropdownParent: $("#addPricingModal"),
                     });
-                $("#itemcode")
+                $("#stockcode")
                     .html(
                         "<option disabled selected>Select Site First</option>",
                     )
@@ -239,7 +278,9 @@ function initializePricingForm() {
                         width: "100%",
                         dropdownParent: $("#addPricingModal"),
                     });
+                resetUMSelect(false);
                 $("#currcode").val("");
+
             }
         });
     }
@@ -300,11 +341,11 @@ function initializePricingForm() {
         $(`#${currCodeId}`).val("");
     });
 
-    // PType to ItemCode
+    // PType to StockCode
     $(document).on("select2:select", "#ptype, #edit_ptype", function () {
         const selectedPType = $(this).val();
         const isEditModal = $(this).attr("id") === "edit_ptype";
-        const selectIdForItems = isEditModal ? "edit_itemcode" : "itemcode";
+        const selectIdForStocks = isEditModal ? "edit_stockcode" : "stockcode";
         const dropdownParent = isEditModal
             ? $("#editPricingModal")
             : $("#addPricingModal");
@@ -314,35 +355,35 @@ function initializePricingForm() {
         if ($("#edit_site").val()) selectedSite = $("#edit_site").val();
 
         if (selectedPType && selectedSite) {
-            const filteredItems = filterItemsBySiteAndPType(
+            const filteredStocks = filterStocksBySiteAndPType(
                 selectedSite,
                 selectedPType,
             );
-            if (filteredItems.length > 0) {
+            if (filteredStocks.length > 0) {
                 populateSelect2(
-                    selectIdForItems,
-                    filteredItems,
-                    "ItemCode",
-                    "ItemCode",
-                    "ItemDesc",
-                    "Select Item Code",
+                    selectIdForStocks,
+                    filteredStocks,
+                    "StockCode",
+                    "StockCode",
+                    "StockDesc",
+                    "Select Stock Code",
                 );
-                $(`#${selectIdForItems}`).prop("disabled", false);
+                $(`#${selectIdForStocks}`).prop("disabled", false);
             } else {
-                $(`#${selectIdForItems}`)
+                $(`#${selectIdForStocks}`)
                     .html(
-                        "<option disabled selected>No Item Code Available</option>",
+                        "<option disabled selected>No Stock Code Available</option>",
                     )
                     .prop("disabled", true)
                     .select2({
-                        placeholder: "No Item Code Available",
+                        placeholder: "No Stock Code Available",
                         width: "100%",
                         dropdownParent: dropdownParent,
                     });
             }
         } else {
             if (!selectedSite) {
-                $(`#${selectIdForItems}`)
+                $(`#${selectIdForStocks}`)
                     .html(
                         "<option disabled selected>Select Site First</option>",
                     )
@@ -353,7 +394,7 @@ function initializePricingForm() {
                         dropdownParent: dropdownParent,
                     });
             } else {
-                $(`#${selectIdForItems}`)
+                $(`#${selectIdForStocks}`)
                     .html(
                         "<option disabled selected>Select Paper Type First</option>",
                     )
@@ -365,6 +406,14 @@ function initializePricingForm() {
                     });
             }
         }
+
+        populateUMWhenReady(isEditModal);
+    });
+
+    // Stock Code + PType => UM
+    $(document).on("select2:select change", "#stockcode, #edit_stockcode", function () {
+        const isEditModal = $(this).attr("id") === "edit_stockcode";
+        populateUMWhenReady(isEditModal);
     });
 
     // Vendor to Currency
@@ -455,8 +504,8 @@ $("#addPricingModal").on("hidden.bs.modal", function () {
         $("#vendor").select2("destroy");
     if ($("#group").hasClass("select2-hidden-accessible"))
         $("#group").select2("destroy");
-    if ($("#itemcode").hasClass("select2-hidden-accessible"))
-        $("#itemcode").select2("destroy");
+    if ($("#stockcode").hasClass("select2-hidden-accessible"))
+        $("#stockcode").select2("destroy");
     initializeFormSelects(false);
 });
 
@@ -496,22 +545,25 @@ $(document).on("click", ".edit-pricing-btn", function (e) {
     );
 
     const selectedPType = row.data("ptype");
-    const filteredItems = filterItemsBySiteAndPType(site, selectedPType);
+    const filteredStocks = filterStocksBySiteAndPType(site, selectedPType);
     populateSelect2(
-        "edit_itemcode",
-        filteredItems,
-        "ItemCode",
-        "ItemCode",
-        "ItemDesc",
-        "Select Item Code",
+        "edit_stockcode",
+        filteredStocks,
+        "StockCode",
+        "StockCode",
+        "StockDesc",
+        "Select Stock Code",
     );
 
     setTimeout(() => {
         $("#edit_group").val(selectedGroup).trigger("change");
         $("#edit_ptype").val(selectedPType).trigger("change");
         $("#edit_vendor").val(row.data("vendor")).trigger("change");
-        $("#edit_itemcode").val(row.data("itemcode")).trigger("change");
+        $("#edit_stockcode").val(row.data("stockcode")).trigger("change");
         $("#edit_currcode").val(row.data("currcode"));
+
+        populateUMWhenReady(true);
+        $("#edit_unit").val(row.data("um")).trigger("change");
     }, 100);
 
     const effectiveDate = row.data("effectivedate");
@@ -542,8 +594,8 @@ $("#editPricingModal").on("hidden.bs.modal", function () {
         $("#edit_vendor").select2("destroy");
     if ($("#edit_group").hasClass("select2-hidden-accessible"))
         $("#edit_group").select2("destroy");
-    if ($("#edit_itemcode").hasClass("select2-hidden-accessible"))
-        $("#edit_itemcode").select2("destroy");
+    if ($("#edit_stockcode").hasClass("select2-hidden-accessible"))
+        $("#edit_stockcode").select2("destroy");
     initializeFormSelects(true);
 });
 
@@ -597,7 +649,7 @@ $(document).on("click", ".delete-pricing-btn", function (e) {
     const pricingId = $(this).data("id");
     const ptype = $(this).data("ptype");
     const vendor = $(this).data("vendor");
-    const itemcode = $(this).data("itemcode");
+    const stockcode = $(this).data("stockcode");
 
     Swal.fire({
         title: "Delete this pricing?",
@@ -605,7 +657,7 @@ $(document).on("click", ".delete-pricing-btn", function (e) {
             You are about to delete this pricing:<br><br>
             Paper Type: <strong>${ptype}</strong><br>
             Vendor: <strong>${vendor}</strong><br>
-            Item Code: <strong>${itemcode}</strong><br><br>
+            Stock Code: <strong>${stockcode}</strong><br><br>
             This action cannot be undone.
         `,
         icon: "warning",

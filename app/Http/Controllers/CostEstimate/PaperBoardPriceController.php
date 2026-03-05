@@ -42,24 +42,34 @@ class PaperBoardPriceController extends Controller
         }
     }
 
-    // New method to fetch all items
-    public function getItems()
+    // New method to fetch all stocks
+    public function getStocks()
     {
         try {
-            $items = PaperBoardPricing::getItems();
-            return response()->json($items);
+            $stocks = PaperBoardPricing::getStocks();
+            return response()->json($stocks);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error fetching items: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Error fetching stocks: ' . $e->getMessage()], 500);
         }
     }
 
-    public function getItemCode(Request $request)
+    public function getStockCode(Request $request)
     {
         try {
-            $items = PaperBoardPricing::getItemCode($request->site, $request->ptype);
-            return response()->json($items);
+            $stocks = PaperBoardPricing::getStockCode($request->site, $request->ptype);
+            return response()->json($stocks);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error fetching item codes: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Error fetching stock codes: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function getUM()
+    {
+        try {
+            $um = PaperBoardPricing::getUM();
+            return response()->json($um);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error fetching unit of measure: ' . $e->getMessage()], 500);
         }
     }
 
@@ -83,7 +93,8 @@ class PaperBoardPriceController extends Controller
             'Group' => 'nullable|max:10',
             'PType' => 'required|max:7',
             'Vendor' => 'required|max:10',
-            'ItemCode' => 'required|max:30',
+            'StockCode' => 'required|max:30',
+            'UM' => 'required|max:10',
             'Currcode' => 'required|max:3',
             'Price_MT' => 'nullable|numeric',
             'Price_Sheet' => 'nullable|numeric',
@@ -103,7 +114,8 @@ class PaperBoardPriceController extends Controller
             'Group' => 'nullable|max:10',
             'PType' => 'required|max:7',
             'Vendor' => 'required|max:10',
-            'ItemCode' => 'required|max:30',
+            'StockCode' => 'required|max:30',
+            'UM' => 'required|max:10',
             'Currcode' => 'required|max:3',
             'Price_MT' => 'nullable|numeric',
             'Price_Sheet' => 'nullable|numeric',
@@ -125,5 +137,11 @@ class PaperBoardPriceController extends Controller
             return response()->json(['message' => $result['message']], 404);
         }
         return response()->json(['message' => $result['message']]);
+    }
+
+    public function pbpcalculatorForm()
+    {
+
+        return view('ce.ce-layouts.pbp-calculator');
     }
 }

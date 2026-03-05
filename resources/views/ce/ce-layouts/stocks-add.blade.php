@@ -1,5 +1,5 @@
 @extends('ce/ce-layouts.app')
-@section('title', 'Items | ' . config('app.name'))
+@section('title', 'Stocks | ' . config('app.name'))
 @section('content')
 
     <div class="app-content-wrapper">
@@ -10,16 +10,36 @@
                         <div class="card p-3">
                             <div class="card-header">
                                 <h3 class="mb-0">
-                                    <i class="fs-4 fas fa-edit me-2"></i> Edit Item
+                                    <i class="fs-4 fas fa-plus-circle me-2"></i> Add New Stock
                                 </h3>
                             </div>
                             <div class="card-body">
-                                <form id="editItemForm" action="{{ route('items.update') }}" method="POST">
+                                <form action="{{ route('stocks.store') }}" id="addStockForm" method="POST" enctype="multipart/form-data">
                                     @csrf
-                                    @method('PUT')
-
-                                    <input type="hidden" name="site" value="{{ $item->Site }}">
-                                    <input type="hidden" name="itemcode" value="{{ $item->ItemCode }}">
+                                    
+                                    <!-- Site Selection (Top) -->
+                                    @if(auth()->user()->level == 1)
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <div class="alert alert-info d-flex align-items-center" role="alert">
+                                                    <i class="fas fa-info-circle me-2"></i>
+                                                    <div>Select the site for this stock</div>
+                                                </div>
+                                                <label for="site" class="form-label fw-bold">Site</label>
+                                                <select name="Site" id="site" class="form-select form-select-lg" required>
+                                                    <option disabled selected>Choose Site...</option>
+                                                    @foreach($sites as $site)
+                                                        <option value="{{ $site->site }}" {{ old('site') == $site->site ? 'selected' : '' }}>
+                                                            {{ $site->site_desc }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('Site') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                            </div>
+                                        </div>
+                                    @else
+                                        <input type="hidden" name="Site" value="{{ auth()->user()->site }}">
+                                    @endif
 
                                     <!-- Three Column Layout -->
                                     <div class="row mb-4">
@@ -33,25 +53,21 @@
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="mb-3">
-                                                        <label for="product_group" class="form-label fw-semibold">Product
-                                                            Group</label>
-                                                        <select name="product_group" id="product_group" class="form-select"
-                                                            data-current="{{ old('product_group', $item->ProductGroup) }}">
-                                                            <option disabled>Select Product Group</option>
-                                                            <option value="PAPER" {{ old('product_group', $item->ProductGroup) == 'PAPER' ? 'selected' : '' }}>
-                                                                Paper
-                                                            </option>
+                                                        <label for="product_group" class="form-label fw-semibold">Product Group</label>
+                                                        <select name="product_group" id="product_group" class="form-select">
+                                                            <option disabled selected>Select Product Group</option>
+                                                            <option value="PAPER">PAPER</option>
                                                         </select>
                                                     </div>
 
                                                     <div class="mb-3">
                                                         <label for="ptype" class="form-label fw-semibold">Paper Type</label>
-                                                        <select name="ptype" id="ptype" class="form-select"
-                                                            data-current="{{ old('ptype', $item->PType) }}">
-                                                            <option disabled>Select Type</option>
+                                                        <select name="ptype" id="ptype" class="form-select">
+                                                            <option disabled selected>Select Type</option>
+                                                            
                                                         </select>
                                                     </div>
-
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -68,8 +84,7 @@
                                                     <div class="mb-3">
                                                         <label for="gsm" class="form-label fw-semibold">GSM</label>
                                                         <div class="input-group">
-                                                            <input type="number" class="form-control" id="gsm" name="gsm"
-                                                                placeholder="0" value="{{ old('gsm', $item->GSM) }}">
+                                                            <input type="number" class="form-control" id="gsm" name="gsm" placeholder="0">
                                                             <span class="input-group-text">g/m²</span>
                                                         </div>
                                                     </div>
@@ -77,30 +92,22 @@
                                                     <div class="mb-3">
                                                         <label for="caliper" class="form-label fw-semibold">Caliper</label>
                                                         <div class="input-group">
-                                                            <input type="number" class="form-control" id="caliper"
-                                                                name="caliper" placeholder="0"
-                                                                value="{{ old('caliper', $item->Caliper) }}">
+                                                            <input type="number" class="form-control" id="caliper" name="caliper" placeholder="0">
                                                             <span class="input-group-text">pts</span>
                                                         </div>
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="pounds_ream"
-                                                            class="form-label fw-semibold">Pounds/Ream</label>
+                                                        <label for="pounds_ream" class="form-label fw-semibold">Pounds/Ream</label>
                                                         <div class="input-group">
-                                                            <input type="number" class="form-control" id="pounds_ream"
-                                                                name="pounds_ream" placeholder="0"
-                                                                value="{{ old('pounds_ream', $item->PPR) }}">
+                                                            <input type="number" class="form-control" id="pounds_ream" name="pounds_ream" placeholder="0">
                                                             <span class="input-group-text">lbs</span>
                                                         </div>
                                                     </div>
 
                                                     <div class="mb-0">
-                                                        <label for="chipboard_no" class="form-label fw-semibold">Chipboard
-                                                            No.</label>
-                                                        <input type="text" class="form-control" id="chipboard_no"
-                                                            name="chipboard_no" placeholder="Enter chipboard number"
-                                                            value="{{ old('chipboard_no', $item->Cbnum) }}">
+                                                        <label for="chipboard_no" class="form-label fw-semibold">Chipboard No.</label>
+                                                        <input type="text" class="form-control" id="chipboard_no" name="chipboard_no" placeholder="Enter chipboard number">
                                                     </div>
 
                                                 </div>
@@ -119,9 +126,7 @@
                                                     <div class="mb-3">
                                                         <label for="width" class="form-label fw-semibold">Width</label>
                                                         <div class="input-group">
-                                                            <input type="number" class="form-control" id="width"
-                                                                name="width" placeholder="0.00" step="0.01"
-                                                                value="{{ old('width', $item->Width == 0 ? '0' : $item->Width) }}">
+                                                            <input type="number" class="form-control" id="width" name="width" placeholder="0.00" step="0.01">
                                                             <span class="input-group-text">in</span>
                                                         </div>
                                                     </div>
@@ -129,59 +134,37 @@
                                                     <div class="mb-3">
                                                         <label for="length" class="form-label fw-semibold">Length</label>
                                                         <div class="input-group">
-                                                            <input type="number" class="form-control" id="length"
-                                                                name="length" placeholder="0.00" step="0.01"
-                                                                value="{{ old('length', $item->Length == 0 ? '0' : $item->Length) }}">
+                                                            <input type="number" class="form-control" id="length" name="length" placeholder="0.00" step="0.01">
                                                             <span class="input-group-text">in</span>
                                                         </div>
-                                                    </div>
-
-                                                    <div class="mb-0">
-                                                        <label for="unit" class="form-label fw-semibold">Unit of
-                                                            Measure</label>
-                                                        <select name="unit" id="unit" class="form-select">
-                                                            <option value="" disabled selected>Select Unit</option>
-                                                            @foreach($units as $unit)
-                                                                <option value="{{ $unit->UM }}" {{ old('unit', $item->UM) == $unit->UM ? 'selected' : '' }}>
-                                                                    {{ $unit->UM . ' - ' . $unit->UMDesc }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Item Information (Bottom Full Width) -->
+                                    <!-- Stock Information (Bottom Full Width) -->
                                     <div class="row mb-4">
                                         <div class="col-12">
                                             <div class="card">
                                                 <div class="card-header bg-info text-white">
                                                     <h6 class="mb-0">
-                                                        <i class="fas fa-barcode me-2"></i>Item Information
+                                                        <i class="fas fa-barcode me-2"></i>Stock Information
                                                     </h6>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="row">
                                                         <div class="col-md-3 mb-3">
-                                                            <label for="item_code" class="form-label fw-semibold">Item
-                                                                Code</label>
-                                                            <input type="text" class="form-control bg-light" id="item_code"
-                                                                name="item_code" placeholder="Auto-generated"
-                                                                value="{{ old('item_code', $item->ItemCode) }}" readonly>
+                                                            <label for="stock_code" class="form-label fw-semibold">Stock Code</label>
+                                                            <input type="text" class="form-control bg-light" id="stock_code" name="stock_code" placeholder="Auto-generated" readonly>
                                                             <div class="form-text">
-                                                                <i class="fas fa-magic me-1"></i>Automatically generated
-                                                                based on specifications
+                                                                <i class="fas fa-magic me-1"></i>Automatically generated based on specifications
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-9 mb-0">
-                                                            <label for="item_description"
-                                                                class="form-label fw-semibold">Item Description</label>
-                                                            <input type="text" class="form-control" id="item_description"
-                                                                name="item_description" placeholder="Enter item description"
-                                                                value="{{ old('item_description', $item->ItemDesc) }}">
+                                                            <label for="stock_description" class="form-label fw-semibold">Stock Description</label>
+                                                            <input type="text" class="form-control" id="stock_description" name="stock_description" placeholder="Enter stock description">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -193,12 +176,14 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="d-flex justify-content-end gap-2">
-                                                <button onclick="window.location.href='{{ route('items.index') }}'"
-                                                    type="button" class="btn btn-outline-secondary btn-lg px-4">
+                                                <button onclick="window.location.href='{{ route('stocks.index') }}'" type="button" class="btn btn-outline-secondary btn-lg px-4">
                                                     <i class="fas fa-times me-2"></i>Cancel
                                                 </button>
-                                                <button type="submit" id="updateItembtn" class="btn btn-primary btn-lg px-4">
-                                                    <i class="fas fa-save me-2"></i>Save Changes
+                                                <button type="reset" class="btn btn-outline-secondary btn-lg px-4">
+                                                    <i class="fas fa-eraser me-2"></i>Clear
+                                                </button>
+                                                <button type="submit" id="saveStockbtn" class="btn btn-primary btn-lg px-4">
+                                                    <i class="fas fa-plus me-2"></i>Add Stock
                                                 </button>
                                             </div>
                                         </div>
