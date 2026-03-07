@@ -70,7 +70,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addVendorForm">
+                    <form action="{{ route('vendors.store') }}" method="POST" id="addVendorForm" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             @if(auth()->user()->level == 1)

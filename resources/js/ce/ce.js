@@ -8,6 +8,7 @@ import "./ptypes.js";
 import "./vendors.js";
 import "./stocks.js";
 import "./pbp.js";
+import "./pbpcalculator.js";
 
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -25,7 +25,7 @@
 </head>
 
 <!-- <body class="layout-fixed fixed-header fixed-footer sidebar-mini sidebar-expand-*"> -->
-<body class="layout-fixed fixed-header fixed-footer sidebar-expand-lg sidebar-mini bg-body-tertiary app-loaded">
+<body class="layout-fixed fixed-header fixed-footer sidebar-expand-lg sidebar-collapse sidebar-mini bg-body-tertiary app-loaded">
     <div class="app-wrapper">
         {{-- Navbar --}}
         @include('ce.ce-partials.nav')

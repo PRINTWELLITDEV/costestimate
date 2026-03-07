@@ -141,7 +141,51 @@ class PaperBoardPriceController extends Controller
 
     public function pbpcalculatorForm()
     {
+        $sites = PaperBoardPricing::siteList();
+        $stockCodes = PaperBoardPricing::getStocks();
 
-        return view('ce.ce-layouts.pbp-calculator');
+        return view('ce.ce-layouts.pbp-calculator', compact('sites', 'stockCodes'));
+    }
+
+    public function pbpCalculate(Request $request)
+    {
+        $validated = $request->validate([
+            'site' => 'required|max:8',
+            'StockCode' => 'required|max:30',
+            'StockDesc' => 'required|max:255',
+            'PType' => 'required|max:20',
+            'GSM' => 'required|numeric',
+            'SheetMM_L' => 'required|numeric',
+            'SheetMM_W' => 'required|numeric',
+            'SheetIN_L' => 'required|numeric',
+            'SheetIN_W' => 'required|numeric',
+            'FXRate' => 'required|numeric',
+            'DutyRate' => 'nullable|numeric',
+            'OtherChargesRate' => 'nullable|numeric',
+            'SheetingCost' => 'nullable|numeric',
+        ]);
+
+        try {
+            $result = PaperBoardPricing::getPricingForCalculator(
+                $validated['site'],
+                $validated['StockCode'],
+                $validated['PType'],
+                $validated['GSM'],
+                [
+                    'FXRate' => (float) $validated['FXRate'],
+                    'DutyRate' => (float) ($validated['DutyRate'] ?? 0),
+                    'OtherChargesRate' => (float) ($validated['OtherChargesRate'] ?? 0),
+                    'SheetingCost' => (float) ($validated['SheetingCost'] ?? 0),
+                    'SheetIN_L' => (float) $validated['SheetIN_L'],
+                    'SheetIN_W' => (float) $validated['SheetIN_W'],
+                    'SheetMM_L' => (float) $validated['SheetMM_L'],
+                    'SheetMM_W' => (float) $validated['SheetMM_W'],
+                ]
+            );
+            $msg = 'Calculation successful.';
+            return response()->json(['result' => $result, 'message' => $msg] );
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error calculating price: ' . $e->getMessage()], 500);
+        }
     }
 }

@@ -113,6 +113,7 @@ Route::prefix('ce')->middleware('auth')->group(function () {
     Route::delete('/paper-board-price/delete', [PaperBoardPriceController::class, 'delete'])->name('paperboardprice.delete');
 
     Route::get('/paper-board-price/calculator', [PaperBoardPriceController::class, 'pbpcalculatorForm'])->name('paperboardprice.calculator');
+    Route::post('/paper-board-price/calculator/calculate', [PaperBoardPriceController::class, 'pbpCalculate'])->name('paperboardprice.calculator.calculate');
 });
 
 

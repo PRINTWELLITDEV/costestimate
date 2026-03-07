@@ -85,9 +85,21 @@ class PaperBoardPricing extends Model
 
     public static function getStocks()
     {
-        return Stocks::orderBy('Site', 'asc')
-            ->orderBy('StockCode', 'asc')
-            ->get(['Site', 'PType', 'StockCode', 'StockDesc']);
+        $query = "SELECT 
+                    s.Site,
+                    ProdGroup,
+                    s.PType, p.PTypeDesc,
+                    StockCode, StockDesc, GSM, Caliper, PPR, Cbnum, Width, Length
+                FROM 
+                    stocks s
+                    INNER JOIN ptype p ON p.PType = s.PType AND p.Site = s.Site
+                ORDER BY
+                    s.Site ASC, s.StockCode ASC";
+
+        return DB::select($query);
+        // return Stocks::orderBy('Site', 'asc')
+        //     ->orderBy('StockCode', 'asc')
+        //     ->get(['Site', 'PType', 'StockCode', 'StockDesc']);
     }
 
     public static function getStockCode($site, $ptype)
@@ -178,5 +190,96 @@ class PaperBoardPricing extends Model
 
         $pricing->delete();
         return ['error' => false, 'message' => 'Pricing deleted successfully.'];
+    }
+
+    public static function getPricingForCalculator($site, $stockcode, $ptype, $gsm, $inputs = [])
+    {
+        $query = "SELECT 
+                    pbp.Site,
+                    pbp.[Group],
+                    pbp.PType,
+                    pbp.Vendor,
+                    pbp.StockCode,
+                    s.StockDesc,
+                    s.GSM,
+                    pbp.UM,
+                    pbp.Currcode,
+                    pbp.Price_MT,
+                    pbp.Price_Sheet,
+                    pbp.Price_Pound,
+                    pbp.Price_Bale
+
+                FROM PaperBoardPricing pbp
+                    INNER JOIN stocks s ON s.StockCode = pbp.StockCode AND s.site = pbp.Site
+
+                WHERE
+                    pbp.StockCode = ?
+                    AND pbp.PType = ?
+                    AND s.GSM = ?
+                    AND pbp.Site = ?";
+        
+        $result = DB::select($query, [$stockcode, $ptype, $gsm, $site]);
+
+        $calculatedResults = [];
+        foreach ($result as $pricing) {
+            $row = array_merge((array) $pricing, $inputs);
+            $calculatedResults[] = array_merge($row, self::calculatePrice($row));
+        }
+        return $calculatedResults;
+    }
+
+    public static function calculatePrice($data)
+    {
+        $CFCostInPesos = $data['Price_MT'] * $data['FXRate'];
+        $DutyRate = $data['DutyRate']/100 ?? 0.01; //default to 1% if not provided
+
+        // User-controlled (checkbox) to exclude duty from calculation. 
+        // This is for special cases where duty is not applicable or should be ignored for comparison purposes.
+        $excludeDuty = $data['ExcludeDuty'] ?? false;
+        if ($excludeDuty) {
+            $DutyRate = 0;
+        }
+        $DutyAmount = $CFCostInPesos * $DutyRate;
+        $OtherCharges = $CFCostInPesos * (($data['OtherChargesRate'] ?? 0) / 100);
+        $LandedCost = $CFCostInPesos + $DutyAmount + $OtherCharges;
+
+        // SH: user-controlled (checkbox). RL: always with sheeting cost by default.
+        $applySheeting = false;
+        if (array_key_exists('ApplySheeting', $data)) {
+            $applySheeting = filter_var($data['ApplySheeting'], FILTER_VALIDATE_BOOLEAN);
+        } elseif (($data['UM'] ?? '') === 'RL') {
+            $applySheeting = true;
+        }
+
+        $SheetingCost = $applySheeting ? (float)($data['SheetingCost'] ?? 0) : 0.0;
+
+        $SheetedCost = $LandedCost + $SheetingCost;
+
+        $SheetSizeMM_L = $data['SheetMM_L'];
+        $SheetSizeMM_W = $data['SheetMM_W'];
+        $SheetSizeIn_L = $SheetSizeMM_L / 25.4;
+        $SheetSizeIn_W = $SheetSizeMM_W / 25.4;
+
+        $AreaInSqIn = $SheetSizeIn_L * $SheetSizeIn_W;
+        $AreaInSqMM = $AreaInSqIn / 1550;
+        $GramsPerSheet = $AreaInSqMM * $data['GSM'];
+        $SheetsPerMT = $GramsPerSheet > 0 ? 1000000 / $GramsPerSheet : 0;
+        $CostPerSheet = $SheetsPerMT > 0 ? $SheetedCost / $SheetsPerMT : 0;
+
+        return [
+            'CFCostInPesos' => round($CFCostInPesos, 2),
+            'DutyRate' => round($DutyRate * 100, 2),
+            'DutyAmount' => round($DutyAmount, 2),
+            'OtherCharges' => round($OtherCharges, 2),
+            'LandedCost' => round($LandedCost, 2),
+            'SheetingCost' => round($SheetingCost, 2),
+            'SheetedCost' => round($SheetedCost, 2),
+            'AreaInSqIn' => round($AreaInSqIn, 2),
+            'AreaInSqMM' => round($AreaInSqMM, 8),
+            'GramsPerSheet' => round($GramsPerSheet, 8),
+            'SheetsPerMT' => round($SheetsPerMT, 0),
+            'CostPerSheet' => round($CostPerSheet, 4),
+            'ApplySheeting' => $applySheeting,
+        ];
     }
 }

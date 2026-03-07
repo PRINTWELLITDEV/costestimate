@@ -33,7 +33,7 @@
     --success-color: #16A34A; /* success color */
     --danger-color: #DC2626; /* danger color */
     --warning-color: #F59E0B; /* warning color */
-    --gray-color: #9CA3AF; /* gray color */
+    --gray-color: #eaeaeb; /* gray color */
 }
 
 .app-main {
@@ -211,7 +211,7 @@
 }
 
 /* backgrounds bg  */ 
-.bg-primary {
+/* .bg-primary {
     background-color: var(--primary) !important;
     color: var(--white) !important;
 }
@@ -234,6 +234,10 @@
 .bg-info {
     background-color: var(--accent) !important;
     color: var(--white) !important;
+} */
+
+.bg-gray {
+    background-color: var(--gray-color) !important;
 }
 
 /* modal */
@@ -268,4 +272,9 @@
     font-size: medium;
     border-radius: 5px;
     text-align: center;
+}
+
+.form-check-input{
+    width: 20px;
+    height: 20px;
 }

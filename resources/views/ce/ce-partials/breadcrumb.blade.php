@@ -12,10 +12,11 @@
                 '/ce/users' => 'Users',
                 '/ce/paper-types' => 'Paper Types',
                 '/ce/vendors' => 'Vendors',
-                '/ce/items' => 'Items',
-                '/ce/items/add' => 'Add Item',
-                '/ce/items/edit' => 'Edit Item',
-                '/ce/paper-board-price' => 'Paper Board Price',
+                '/ce/stocks' => 'Stocks',
+                '/ce/stocks/add-stock' => 'Add Stock',
+                '/ce/stocks/edit-stock' => 'Edit Stock',
+                '/ce/paper-board-price' => 'Paper / Board Pricing',
+                '/ce/paper-board-price/calculator' => 'Price Calculator',
                 '/ce/u' => 'Profile',
             ];
             
