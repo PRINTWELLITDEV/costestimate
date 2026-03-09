@@ -253,7 +253,7 @@ $(function () {
                     <td class="js-area-sqmm">${num(r.AreaInSqMM, 8)}</td>
                     <td class="js-grams-per-sheet">${num(r.GramsPerSheet, 8)}</td>
                     <td class="js-sheets-per-mt">${num(r.SheetsPerMT, 0)}</td>
-                    <td><input class="form-check-input js-sheeting-toggle" type="checkbox" ${shToggleEnabled ? "" : "disabled"}></td>
+                    ${shToggleEnabled ? '<td><input class="form-check-input js-sheeting-toggle" type="checkbox"></td>' : '<td></td>'}
                     <td><input class="form-check-input js-excludeduty-toggle" type="checkbox"></td>
                 </tr>
             `;
@@ -296,13 +296,13 @@ $(function () {
     });
 
     // optional: if rates change, recalc all visible rows
-    $(document).on("input", 'input[name="FXRate"], input[name="DutyRate"], input[name="OtherChargesRate"], input[name="SheetingCost"], #sheet_mm_l, #sheet_mm_w', function () {
-        $("#pbpCalculatorTbody tr").each(function () {
-            if ($(this).find(".js-cost-per-sheet").length) {
-                recalculateRow($(this));
-            }
-        });
-    });
+    // $(document).on("input", 'input[name="FXRate"], input[name="DutyRate"], input[name="OtherChargesRate"], input[name="SheetingCost"], #sheet_mm_l, #sheet_mm_w', function () {
+    //     $("#pbpCalculatorTbody tr").each(function () {
+    //         if ($(this).find(".js-cost-per-sheet").length) {
+    //             recalculateRow($(this));
+    //         }
+    //     });
+    // });
 
     $(document).on("submit", "#pbpCalculatorForm", function (e) {
         e.preventDefault();
