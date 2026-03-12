@@ -288,7 +288,6 @@ function AutoGenerationListeners() {
         "gsm",
         "width",
         "length",
-        "unit",
     ];
 
     generationFields.forEach((fieldId) => {
@@ -309,11 +308,10 @@ function generateStockCode() {
     const gsm = document.getElementById("gsm")?.value || "";
     const width = document.getElementById("width")?.value || "";
     const length = document.getElementById("length")?.value || "";
-    const unit = document.getElementById("unit")?.value || "";
 
     // Only generate if we have at least PType
     if (!ptype || ptype === "Select Type") {
-        document.getElementById("stock_code").value = "";
+        document.getElementById("ptype").value = "";
         generateStockDescription();
         return;
     }
@@ -368,13 +366,8 @@ function generateStockCode() {
         }
     }
 
-    // Unit - first letter
-    // if (unit) {
-    //     stockCode += unit.charAt(0).toUpperCase();
-    // }
-
     // Set the generated stock code
-    document.getElementById("stock_code").value = stockCode;
+    document.getElementById("stockCode").value = stockCode;
 
     // Generate stock description
     generateStockDescription();
@@ -396,7 +389,6 @@ function generateStockDescription() {
     const poundsReam = document.getElementById("pounds_ream")?.value || "";
     const width = document.getElementById("width")?.value || "";
     const length = document.getElementById("length")?.value || "";
-    const unit = document.getElementById("unit")?.value || "";
 
     let description = "";
 
@@ -453,17 +445,12 @@ function generateStockDescription() {
         }
     }
 
-    // If UM exist then add the value of UM
-    // if (unit) {
-    //     specs.push(unit);
-    // }
-
     // Join all parts
     if (specs.length > 0) {
         description += " " + specs.join(" ");
     }
 
-    document.getElementById("stock_description").value = description;
+    document.getElementById("stockDescription").value = description;
 }
 
 // Handle add stock button click

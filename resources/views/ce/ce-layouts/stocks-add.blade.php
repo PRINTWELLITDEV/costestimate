@@ -155,16 +155,16 @@
                                                 <div class="card-body">
                                                     <div class="row">
                                                         <div class="col-md-3 mb-3">
-                                                            <label for="stock_code" class="form-label fw-semibold">Stock Code</label>
-                                                            <input type="text" class="form-control bg-light" id="stock_code" name="stock_code" placeholder="Auto-generated" readonly>
+                                                            <label for="stockCode" class="form-label fw-semibold">Stock Code</label>
+                                                            <input type="text" class="form-control bg-light" id="stockCode" name="stock_code" placeholder="Auto-generated" readonly>
                                                             <div class="form-text">
                                                                 <i class="fas fa-magic me-1"></i>Automatically generated based on specifications
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-9 mb-0">
-                                                            <label for="stock_description" class="form-label fw-semibold">Stock Description</label>
-                                                            <input type="text" class="form-control" id="stock_description" name="stock_description" placeholder="Enter stock description">
+                                                            <label for="stockDescription" class="form-label fw-semibold">Stock Description</label>
+                                                            <input type="text" class="form-control" id="stockDescription" name="stock_description" placeholder="Enter stock description">
                                                         </div>
                                                     </div>
                                                 </div>

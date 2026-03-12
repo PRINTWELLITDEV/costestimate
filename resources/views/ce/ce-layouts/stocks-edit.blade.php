@@ -152,9 +152,9 @@
                                                 <div class="card-body">
                                                     <div class="row">
                                                         <div class="col-md-3 mb-3">
-                                                            <label for="stock_code" class="form-label fw-semibold">Stock
+                                                            <label for="stockCode" class="form-label fw-semibold">Stock
                                                                 Code</label>
-                                                            <input type="text" class="form-control bg-light" id="stock_code"
+                                                            <input type="text" class="form-control bg-light" id="stockCode"
                                                                 name="stock_code" placeholder="Auto-generated"
                                                                 value="{{ old('stock_code', $stock->StockCode) }}" readonly>
                                                             <div class="form-text">
@@ -164,9 +164,9 @@
                                                         </div>
 
                                                         <div class="col-md-9 mb-0">
-                                                            <label for="stock_description"
+                                                            <label for="stockDescription"
                                                                 class="form-label fw-semibold">Stock Description</label>
-                                                            <input type="text" class="form-control" id="stock_description"
+                                                            <input type="text" class="form-control" id="stockDescription"
                                                                 name="stock_description" placeholder="Enter stock description"
                                                                 value="{{ old('stock_description', $stock->StockDesc) }}">
                                                         </div>
