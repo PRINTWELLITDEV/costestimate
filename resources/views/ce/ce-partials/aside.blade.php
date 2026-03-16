@@ -60,10 +60,29 @@
                 </li>
                 @endif
 
+                <li class="nav-item has-treeview{{ request()->is('ce/paper-board-price/calculator') ? ' menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon bi bi-folder-fill"></i>
+                        <p>
+                            Estimate
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ url('/ce/paper-board-price/calculator') }}"
+                                class="nav-link{{ request()->is('ce/paper-board-price/calculator') ? ' active' : '' }}">
+                                <i class="nav-icon bi bi-calculator"></i>
+                                <p>Paper / Board Price Calculator</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="nav-item has-treeview{{ request()->is('ce/paper-types*') ||
                     request()->is('ce/vendors*') ||
                     request()->is('ce/stocks*') ||
-                    request()->is('ce/paper-board-price*') ? ' menu-open' : '' }}">
+                    request()->is('ce/paper-board-price') ? ' menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon bi bi-folder-fill"></i>
                         <p>
@@ -74,7 +93,7 @@
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ url('/ce/paper-board-price') }}"
-                                class="nav-link{{ request()->is('ce/paper-board-price*') ? ' active' : '' }}">
+                                class="nav-link{{ request()->is('ce/paper-board-price') ? ' active' : '' }}">
                                 <i class="nav-icon bi bi-tag-fill"></i>
                                 <p>Paper / Board Pricing</p>
                             </a>
