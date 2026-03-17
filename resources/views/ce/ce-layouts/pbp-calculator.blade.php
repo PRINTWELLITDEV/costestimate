@@ -7,7 +7,7 @@
             <div class="container-fluid">
                 <div class="row align-items-center">
                     <div class="col mb-3 d-flex align-items-center">
-                        <h1 class="d-inline-block mb-0 me-3">Paper / Board Price Calculator</h1>
+                        <h1 class="d-inline-block mb-0 me-3">Paper / Board Price Calculator - Imported</h1>
                         @if(session('success'))
                             <div id="success-alert" class="alert alert-success py-1 px-3 mb-0"
                                 style="transition: opacity 0.7s;">
@@ -238,7 +238,7 @@
                             </div>
                             <div class="card-footer">
                                 <div class="d-flex justify-content-start gap-2">
-                                    <button type="button" id="addToEstimateBtn" class="btn btn-success btn-md" disabled>
+                                    <button type="button" id="updateCost" class="btn btn-success btn-md" disabled>
                                         <i class="bi bi-pen-fill"></i> Update Paper Cost
                                     </button>
                                 </div>

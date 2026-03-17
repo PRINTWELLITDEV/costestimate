@@ -267,14 +267,14 @@ if (window.location.pathname.includes("/paper-board-price/calculator")) {
                     <td class="js-area-sqmm">${num(r.AreaInSqMM, 8)}</td>
                     <td class="js-grams-per-sheet">${num(r.GramsPerSheet, 8)}</td>
                     <td class="js-sheets-per-mt">${num(r.SheetsPerMT, 0)}</td>
-                    ${shToggleEnabled ? '<td><input class="form-check-input js-sheeting-toggle" type="checkbox"></td>' : "<td></td>"}
-                    <td><input class="form-check-input js-excludeduty-toggle" type="checkbox"></td>
+                    ${shToggleEnabled ? '<td><input class="form-check-input js-sheeting-toggle" name="ApplySheeting" type="checkbox"></td>' : "<td></td>"}
+                    <td><input class="form-check-input js-excludeduty-toggle" name="ExcludeDuty" type="checkbox"></td>
                 </tr>
             `;
             });
 
             $tbody.html(html);
-            $("#addToEstimateBtn").prop("disabled", true);
+            $("#updateCost").prop("disabled", true);
         }
 
         // Only one row can be checked at a time
@@ -282,23 +282,10 @@ if (window.location.pathname.includes("/paper-board-price/calculator")) {
             if (this.checked) {
                 $(".js-row-select").not(this).prop("checked", false);
             }
-            $("#addToEstimateBtn").prop(
+            $("#updateCost").prop(
                 "disabled",
                 $(".js-row-select:checked").length === 0,
             );
-        });
-
-        // Update Paper Cost button -> put selected row CostPerSheet into top form field
-        $(document).on("click", "#addToEstimateBtn", function () {
-            const $checked = $(".js-row-select:checked").first();
-            if (!$checked.length) return;
-
-            const $row = $checked.closest("tr");
-            const raw = Number(
-                $row.find(".js-cost-per-sheet").data("value") || 0,
-            );
-
-            $('input[name="CostPerSheet"]').val(raw.toFixed(4));
         });
 
         $(document).on("change", ".js-sheeting-toggle", function () {
@@ -309,6 +296,18 @@ if (window.location.pathname.includes("/paper-board-price/calculator")) {
         $(document).on("change", ".js-excludeduty-toggle", function () {
             const $tr = $(this).closest("tr");
             recalculateRow($tr);
+        });
+
+        // Update Paper Cost button -> put selected row CostPerSheet into top form field
+        $(document).on("click", "#updateCost", function () {
+            const $checked = $(".js-row-select:checked").first();
+            if (!$checked.length) return;
+
+            const $row = $checked.closest("tr");
+                
+            const raw = Number($row.find(".js-cost-per-sheet").attr("data-value") || 0);
+
+            $('input[name="CostPerSheet"]').val(raw.toFixed(4));
         });
 
         // optional: if rates change, recalc all visible rows

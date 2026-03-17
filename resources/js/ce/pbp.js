@@ -9,6 +9,16 @@ let allData = {
     u_m: [],
 };
 
+const ADD_EFFECTIVE_DATE_KEY = "pbp_add_effective_date";
+
+// Helper: set add modal date from sessionStorage
+function restoreAddEffectiveDate() {
+    const saved = sessionStorage.getItem(ADD_EFFECTIVE_DATE_KEY);
+    if (saved) {
+        $("#effectivedate").val(saved);
+    }
+}
+
 // Load all data via AJAX when page loads
 function loadAllData() {
     return Promise.all([
@@ -445,6 +455,7 @@ if (window.location.pathname.includes("/paper-board-price")) {
     loadAllData().then(() => {
         loadPricingList();
         initializePricingForm();
+        restoreAddEffectiveDate();
     });
 }
 
@@ -459,6 +470,9 @@ $("#savePricingBtn").on("click", function (e) {
     const form = $("#addPricingForm")[0];
     const formData = new FormData(form);
 
+    // read current date before ajax/reset
+    const selectedDate = $("#effectivedate").val();
+
     $.ajax({
         url: $(form).attr("action"),
         method: "POST",
@@ -466,6 +480,11 @@ $("#savePricingBtn").on("click", function (e) {
         processData: false,
         contentType: false,
         success: function (data) {
+            // store for this browser session
+            if (selectedDate) {
+                sessionStorage.setItem(ADD_EFFECTIVE_DATE_KEY, selectedDate);
+            }
+
             Swal.fire({
                 toast: true,
                 position: "top-end",
@@ -498,15 +517,19 @@ $("#savePricingBtn").on("click", function (e) {
 // Clear Add pricing modal fields when closed
 $("#addPricingModal").on("hidden.bs.modal", function () {
     $(this).find("form")[0].reset();
-    if ($("#ptype").hasClass("select2-hidden-accessible"))
-        $("#ptype").select2("destroy");
-    if ($("#vendor").hasClass("select2-hidden-accessible"))
-        $("#vendor").select2("destroy");
-    if ($("#group").hasClass("select2-hidden-accessible"))
-        $("#group").select2("destroy");
-    if ($("#stockcode").hasClass("select2-hidden-accessible"))
-        $("#stockcode").select2("destroy");
+    if ($("#ptype").hasClass("select2-hidden-accessible")) $("#ptype").select2("destroy");
+    if ($("#vendor").hasClass("select2-hidden-accessible")) $("#vendor").select2("destroy");
+    if ($("#group").hasClass("select2-hidden-accessible")) $("#group").select2("destroy");
+    if ($("#stockcode").hasClass("select2-hidden-accessible")) $("#stockcode").select2("destroy");
+
     initializeFormSelects(false);
+
+    // Re-run dependent dropdown setup
+    if ($("#site").length) {
+        $("#site").trigger("change");
+    }
+
+    restoreAddEffectiveDate();
 });
 
 // Handle edit button click
@@ -588,14 +611,10 @@ $(document).on("click", ".edit-pricing-btn", function (e) {
 // Clear Edit modal fields when closed
 $("#editPricingModal").on("hidden.bs.modal", function () {
     $(this).find("form")[0].reset();
-    if ($("#edit_ptype").hasClass("select2-hidden-accessible"))
-        $("#edit_ptype").select2("destroy");
-    if ($("#edit_vendor").hasClass("select2-hidden-accessible"))
-        $("#edit_vendor").select2("destroy");
-    if ($("#edit_group").hasClass("select2-hidden-accessible"))
-        $("#edit_group").select2("destroy");
-    if ($("#edit_stockcode").hasClass("select2-hidden-accessible"))
-        $("#edit_stockcode").select2("destroy");
+    if ($("#edit_ptype").hasClass("select2-hidden-accessible")) $("#edit_ptype").select2("destroy");
+    if ($("#edit_vendor").hasClass("select2-hidden-accessible")) $("#edit_vendor").select2("destroy");
+    if ($("#edit_group").hasClass("select2-hidden-accessible")) $("#edit_group").select2("destroy");
+    if ($("#edit_stockcode").hasClass("select2-hidden-accessible")) $("#edit_stockcode").select2("destroy");
     initializeFormSelects(true);
 });
 

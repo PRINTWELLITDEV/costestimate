@@ -408,7 +408,7 @@ function generateStockDescription() {
     if (caliper) {
         const caliperNum = parseInt(caliper);
         if (!isNaN(caliperNum) && caliperNum > 0) {
-            specs.push(caliper + " Cal");
+            specs.push("Cal " + caliper);
         }
     }
 
@@ -466,7 +466,6 @@ $("#saveStockbtn").on("click", function (e) {
         processData: false,
         contentType: false,
         success: function (data) {
-            window.location.href = window.appUrl + "/ce/stocks";
             Swal.fire({
                 // toast: true,
                 // position: "top-end",
@@ -475,10 +474,12 @@ $("#saveStockbtn").on("click", function (e) {
                 showConfirmButton: true,
                 // timer: 3000,
                 // timerProgressBar: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // window.location.href = window.appUrl + "/ce/stocks";
+                    window.location.reload();
+                };
             });
-            // $("#addStockModal").modal("hide");
-            // form.reset();
-            setTimeout(loadStocksTable, 500);
         },
         error: function (xhr) {
             let msg = "An error occurred";

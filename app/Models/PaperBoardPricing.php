@@ -235,19 +235,20 @@ class PaperBoardPricing extends Model
 
         // User-controlled (checkbox) to exclude duty from calculation. 
         // This is for special cases where duty is not applicable or should be ignored for comparison purposes.
-        $excludeDuty = $data['ExcludeDuty'] ?? false;
-        if ($excludeDuty) {
-            $DutyRate = 0;
-        }
+        // $excludeDuty = filter_var($data['ExcludeDuty'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        // if ($excludeDuty) {
+        //     $DutyRate = 0;
+        // } else {
+        //     $DutyRate = $data['DutyRate']/100 ?? 0.01; //default to 1% if not provided
+        // }
+
         $DutyAmount = $CFCostInPesos * $DutyRate;
         $OtherCharges = $CFCostInPesos * (($data['OtherChargesRate'] ?? 0) / 100);
         $LandedCost = $CFCostInPesos + $DutyAmount + $OtherCharges;
 
         // SH: user-controlled (checkbox). RL: always with sheeting cost by default.
         $applySheeting = false;
-        if (array_key_exists('ApplySheeting', $data)) {
-            $applySheeting = filter_var($data['ApplySheeting'], FILTER_VALIDATE_BOOLEAN);
-        } elseif (($data['UM'] ?? '') === 'RL') {
+        if (($data['UM'] ?? '') === 'RL') {
             $applySheeting = true;
         }
 
@@ -280,6 +281,7 @@ class PaperBoardPricing extends Model
             'SheetsPerMT' => round($SheetsPerMT, 0),
             'CostPerSheet' => round($CostPerSheet, 4),
             'ApplySheeting' => $applySheeting,
+            // 'ExcludeDuty' => $excludeDuty,
         ];
     }
 }
